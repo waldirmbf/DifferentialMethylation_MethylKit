@@ -1,5 +1,5 @@
 # **Differential methylation analysis using the R package methylKit**
-____
+
  The following documentation describes the R script used to estimate differentially-methylated cytosines between genetically-identical *K. marmoratus* individuals reared in enriched and poor environments with the R package methylKit. Methods are descibed in detail in [Berbel-Filho et al. (2020)](https://onlinelibrary.wiley.com/doi/abs/10.1111/mec.15481)
 
 
@@ -44,7 +44,7 @@ Creating a list of all BAM files to get raw methylation data:
  )
 ```
 
-Extracting raw methylation call files (proportions of Cs and Ts per base) from .bam files aligned with Bismark:
+Extracting raw methylation call files (proportions of Cs and Ts per base) from .bam files aligned with Bismark. For quantitation, a minimum coverage of 10 reads across all individuals (parental and offspring) was estabilished.
 ```
 > objs <- processBismarkAln(location=file.list1,
                             sample.id=list("PE-R03","PE-R04","PE-R08","PE-R09","PE-R12","PE-R14","RE-R05",
@@ -94,8 +94,7 @@ Inputting methylation call files into methylKit:
   system.file("extdata", "2nd_RE_R15_CpG.txt", package = "methylKit"),
  )
 ```
-Reading the files as a methylRawList object called "myobj" with minimum coverage requirement (at least 10 reads per base).
-Treatment '0' for individuals in poor environments; Treatment '1' for individuals in enriched environments. Treatment '2' for offspring in general:
+Reading the files as a methylRawList object called "myobj" with minimum coverage requirement (at least 10 reads per base). We were only interested  to check DMCs  between parents,so there was no need here to dinstiguish the offspring treatments. Treatment '0' for individuals in poor environments; Treatment '1' for individuals in enriched environments.  We set Treatment '2' for all offspring individuals.
 ```
 > myobj <- methRead(file.list2,
                     sample.id=list("PE-R03","PE-R04","PE-R08","PE-R09","PE-R12","PE-R14",
@@ -118,14 +117,14 @@ Merging all samples to have coverage information across all individuals:
 ```
 > united_all <- unite(myobj, destrand=FALSE)
 ```
-Reorganising dataset for the parental generation only:
+Now, the object ``` united_all``` contains coverage information for all cytosines with > 10 reads common to all individuals. As we only wanted to check for epigenetic differences in the parents, we reorganised the data to create a dataset only including parental individuals.Reorganising dataset for the parental generation only:
 ```
 > reorganized_all <- reorganize(united_all,
                             sample.id=c("PE-R03","PE-R04","PE-R08","PE-R09","PE-R12","PE-R14","RE-R05",
                             "RE-R06","RE-R07","RE-R08","RE-R10","RE-R11","RE-R12","RE-R13","RE-R14","RE-R15"),
                             treatment=c(0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1))
 ```
-Getting differentially bases between treatments:
+Getting differentially cytosines between treatments:
 ```
 > myDiff <- calculateDiffMeth(reorganized_all)
 ```
@@ -137,8 +136,7 @@ Writing results:
 ```
 > write(myDiff20p,file="results_DMCs_parents.txt",append=TRUE)
 ```
-Here we found 1854 DMCs between parents living in poor or enriched environment. We need to test
-whether the number of DMCs is higher or lower than expected by chance.
+We found __1854 DMCs__ between parents living in poor or enriched environments. We need to test whether the number of DMCs is higher or lower than expected by chance.
 
 Creating list wtih 4000 permutations of the original treatment:
 ```
@@ -150,7 +148,7 @@ Creating list wtih 4000 permutations of the original treatment:
 ```
 Defining the function ```calculateDMCs```, which receives each treatment permutation and recalculates the number of DMCs:
 ```
-calculateDMCs <- function(x) {
+> calculateDMCs <- function(x) {
 	reorganized_all <- reorganize(united_all,
                               sample.ids=c("PE-R03","PE-R04","PE-R08","PE-R09",
                               "PE-R12","PE-R14","RE-R05","RE-R06","RE-R07","RE-R08",
@@ -165,7 +163,7 @@ calculateDMCs <- function(x) {
 ```
 Calling the function ```calculateDMCs``` for each permutation.  The resulting number of DMCs for each treatment permutation is written into the file __results_PERMUTATIONS.txt.__
 ```
-lapply(mytreatments,calculateDMCs)
+> lapply(mytreatments,calculateDMCs)
 ```
 
 
