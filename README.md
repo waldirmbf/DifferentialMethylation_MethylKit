@@ -94,7 +94,7 @@ Inputting methylation call files into methylKit:
   system.file("extdata", "2nd_RE_R15_CpG.txt", package = "methylKit"),
  )
 ```
-Reading the files as a methylRawList object called "myobj" with minimum coverage requirement (at least 10 reads per base). We were only interested  to check DMCs  between parents,so there was no need here to dinstiguish the offspring treatments. Treatment '0' for individuals in poor environments; Treatment '1' for individuals in enriched environments.  We set Treatment '2' for all offspring individuals.
+Reading the files as a methylRawList object called "myobj" with minimum coverage requirement (at least 10 reads per base). We were only interested  to check DMCs  between parents, so there was no need here to dinstiguish the offspring treatments. Treatment '0' for individuals in poor environments; Treatment '1' for individuals in enriched environments.  We set Treatment '2' for all offspring individuals.
 ```
 > myobj <- methRead(file.list2,
                     sample.id=list("PE-R03","PE-R04","PE-R08","PE-R09","PE-R12","PE-R14",
@@ -117,7 +117,7 @@ Merging all samples to have coverage information across all individuals:
 ```
 > united_all <- unite(myobj, destrand=FALSE)
 ```
-Now, the object ``` united_all``` contains coverage information for all cytosines with > 10 reads common to all individuals. As we only wanted to check for epigenetic differences in the parents, we reorganised the data to create a dataset only including parental individuals.Reorganising dataset for the parental generation only:
+Now, the object ``` united_all``` contains coverage information for all cytosines with > 10 reads common to all individuals. As we only wanted to check for epigenetic differences in the parents, we reorganised the data to create a dataset only including parental individuals. Reorganising dataset for the parental generation only:
 ```
 > reorganized_all <- reorganize(united_all,
                             sample.id=c("PE-R03","PE-R04","PE-R08","PE-R09","PE-R12","PE-R14","RE-R05",
@@ -136,7 +136,7 @@ Writing results:
 ```
 > write(myDiff20p,file="results_DMCs_parents.txt",append=TRUE)
 ```
-We found __1854 DMCs__ between parents living in poor or enriched environments. We need to test whether the number of DMCs is higher or lower than expected by chance.
+We found __1854 DMCs__ (file: results_DMCs_parents.txt) between parents living in poor or enriched environments. We need to test whether the number of DMCs is higher or lower than expected by chance.
 
 Creating list wtih 4000 permutations of the original treatment:
 ```
